@@ -11,6 +11,13 @@ export const parseString = (value: unknown): string => {
 };
 
 export const parseNumber = (value: unknown): number => {
-    if (typeof value !== 'number') throw new Error('Expected number');
-    return value;
+    const v = typeof value === 'string' ? +value : value;
+    if (typeof v !== 'number') throw new Error('Expected number');
+    return v;
+};
+
+export const parseDate = (value: unknown): Date => {
+    const v = typeof value === 'string' ? new Date(value) : value;
+    if (!(v instanceof Date)) throw new Error('Expected date');
+    return v;
 };

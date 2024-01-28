@@ -34,12 +34,12 @@ export abstract class BaseAdapter<T extends { id: number }> {
         return data.map(this.parser);
     }
     
-    public async createRecord(data: T): Promise<void> {
+    public async createRecord(data: T): Promise<T> {
         const url = this.buildUrl();
 
-        const payload = JSON.stringify({...data, id: null});
+        const payload = this._serialize({...data, id: null});
 
-        const response =await fetch(url, {
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -47,13 +47,15 @@ export abstract class BaseAdapter<T extends { id: number }> {
             body: payload,
         });
 
-        this._parseResponse(response);
+        const newRecordData = await this._parseResponse(response);
+
+        return this.parser(newRecordData);
     }
     
     public async updateRecord(data: T): Promise<void> {
         const url = `${this.buildUrl()}/${data.id}`;
 
-        const payload = JSON.stringify(data);
+        const payload = this._serialize(data);
 
         const response = await fetch(url, {
             method: 'PUT',
@@ -63,7 +65,7 @@ export abstract class BaseAdapter<T extends { id: number }> {
             body: payload,
         });
 
-        this._parseResponse(response);
+        this._resolveResponseStatus(response);
     }
     
     public async deleteRecord(id: number): Promise<void> {
@@ -73,7 +75,15 @@ export abstract class BaseAdapter<T extends { id: number }> {
             method: 'DELETE',
         });
 
-        await this._parseResponse(response);
+        this._resolveResponseStatus(response);
+    }
+
+    private _resolveResponseStatus(response: Response): void {
+        if (response.status >= 200 && response.status < 300) {
+            return;
+        } else {
+            throw new Error(response.statusText);
+        }
     }
 
     private _parseResponse(response: Response): unknown {
@@ -86,6 +96,15 @@ export abstract class BaseAdapter<T extends { id: number }> {
         } else {
             throw new Error(response.statusText);
         }
+    }
+
+    private _serialize(data: T): string {
+        return JSON.stringify(data, (_key, value) => {
+            if (value instanceof Date) {
+                return value.toISOString();
+            }
+            return value;
+        });
     }
 }
 

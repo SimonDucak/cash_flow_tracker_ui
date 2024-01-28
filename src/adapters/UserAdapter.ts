@@ -4,14 +4,13 @@ import { parseNumber, parseObject, parseString } from "@/utils/parsers";
 
 export class UserAdapter extends BaseAdapter<User> {
     get model(): string {
-        return 'user';
+        return 'User';
     }
 
     public getEmptyRecord(): User {
         return {
             id: 0,
             name: '',
-            expectedSAvingsPerMonth: 0,
         }
     }
 
@@ -21,7 +20,6 @@ export class UserAdapter extends BaseAdapter<User> {
         return {
             id: parseNumber(obj.id),
             name: parseString(obj.name),
-            expectedSAvingsPerMonth: parseNumber(obj.expectedSavingsPerMonth),
         }
     }
 }

@@ -1,6 +1,5 @@
-
 import { UserAdapter } from "@/adapters/UserAdapter";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,76 +7,78 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { NavigatorRoute, useNavigator } from "@/hooks/navigator";
-
- 
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useNavigator } from "@/hooks/navigator";
 import { useState } from "react";
 
 export function UserForm() {
-    const { navigate } = useNavigator();
+  const { navigateToDashboard } = useNavigator();
 
-    const [name, setName] = useState("");
+  const [name, setName] = useState("");
 
-    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setName(event.target.value);
-        setIsButtonDisabled(event.target.value === "");
-    };
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setName(event.target.value);
+    setIsButtonDisabled(event.target.value === "");
+  };
 
-    const createUser = async (): Promise<void> => {
-        try {
-            if (!name) return;
+  const createUser = async (): Promise<void> => {
+    try {
+      if (!name) return;
 
-            const adapter = new UserAdapter();
+      const adapter = new UserAdapter();
 
-            const record = adapter.getEmptyRecord();
+      const record = adapter.getEmptyRecord();
 
-            record.name = name;
+      record.name = name;
 
-            await adapter.createRecord(record);
+      const newUser = await adapter.createRecord(record);
 
-            navigate(NavigatorRoute.DASHOBARD);
-        } catch (err) {
-            console.log(err);
-            // TODO: Handle error
-        } 
+      navigateToDashboard(newUser.id.toString());
+    } catch (err) {
+      console.log(err);
+      // TODO: Handle error
     }
+  };
 
-    return (
-        <Card className="w-[350px]">
-            <CardHeader>
-                <CardTitle>Create user</CardTitle>
+  return (
+    <Card className="w-[350px]">
+      <CardHeader>
+        <CardTitle>Create user</CardTitle>
 
-                <CardDescription>Deploy your new account in one-click.</CardDescription>
-            </CardHeader>
+        <CardDescription>Deploy your new account in one-click.</CardDescription>
+      </CardHeader>
 
-            <CardContent>
-                <form onSubmit={(event) => {
-                    event.preventDefault();
-                    createUser();
-                }}>
-                    <div className="grid w-full items-center gap-4">
-                        <div className="flex flex-col space-y-1.5">
-                            <Label htmlFor="name">Name</Label>
-                            
-                            <Input 
-                                id="name" 
-                                placeholder="Enter your name..." 
-                                value={name} 
-                                onChange={handleInputChange}
-                            />
-                        </div>
-                    </div>
-                </form>
-            </CardContent>
+      <CardContent>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            createUser();
+          }}
+        >
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-1.5">
+              <Label htmlFor="name">Name</Label>
 
-            <CardFooter className="flex justify-between">
-                <Button onClick={createUser} disabled={isButtonDisabled}>Create user</Button>
-            </CardFooter>
-        </Card>
-    );
+              <Input
+                id="name"
+                placeholder="Enter your name..."
+                value={name}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+        </form>
+      </CardContent>
+
+      <CardFooter className="flex justify-between">
+        <Button onClick={createUser} disabled={isButtonDisabled}>
+          Create user
+        </Button>
+      </CardFooter>
+    </Card>
+  );
 }
