@@ -78,7 +78,7 @@ export abstract class BaseAdapter<T extends { id: number }> {
         this._resolveResponseStatus(response);
     }
 
-    private _resolveResponseStatus(response: Response): void {
+    public _resolveResponseStatus(response: Response): void {
         if (response.status >= 200 && response.status < 300) {
             return;
         } else {
@@ -86,7 +86,7 @@ export abstract class BaseAdapter<T extends { id: number }> {
         }
     }
 
-    private _parseResponse(response: Response): unknown {
+    public _parseResponse(response: Response): unknown {
         if (response.status >= 200 && response.status < 300) {
             try {
                 return response.json();
@@ -98,7 +98,7 @@ export abstract class BaseAdapter<T extends { id: number }> {
         }
     }
 
-    private _serialize(data: T): string {
+    public _serialize(data: T): string {
         return JSON.stringify(data, (_key, value) => {
             if (value instanceof Date) {
                 return value.toISOString();
@@ -113,7 +113,7 @@ export type QueryParam = {
     value: string;
 }
 
-class QueryBuilder {
+export class QueryBuilder {
     private _params: QueryParam[] = [];
 
     public addParam(key: string, value: string): QueryBuilder {

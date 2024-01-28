@@ -60,9 +60,9 @@ export function SavingGoalForm() {
 
   const savingGoalTask = useTask(async (data: SavingGoalValues) => {
     try {
-      const adapter = new SavingGoalAdapter();
+      const adapter = new SavingGoalAdapter(dashboardCtx.state.user.id);
 
-      const savingGoal = adapter.getEmptyRecord(dashboardCtx.state.user.id);
+      const savingGoal = adapter.getEmptyRecord();
 
       const savedGoal = await adapter.createRecord({
         ...savingGoal,

@@ -13,6 +13,7 @@ import DashboardContext, {
 import { NavigatorRouteName, getRoute } from "@/hooks/navigator";
 import SavingGoals from "./dashboard/saving-goals";
 import { SavingGoal } from "@/types/SavingGoal";
+import { SavingGoalAdapter } from "@/adapters/SavingGoalAdapter";
 
 const userAdapter = new UserAdapter();
 
@@ -35,8 +36,18 @@ const Dashboard = () => {
     const loadUser = async () => {
       try {
         const idParam = parseNumber(id);
+
         const foundUser: User | null = await userAdapter.getRecord(idParam);
-        if (foundUser) setState((prev) => ({ ...prev, user: foundUser }));
+
+        if (!foundUser) return;
+
+        setState((prev) => ({ ...prev, user: foundUser }));
+
+        const savingGoalsAdapter = new SavingGoalAdapter(foundUser.id);
+
+        const savingGoals = await savingGoalsAdapter.getRecords();
+
+        setState((prev) => ({ ...prev, savingGoals }));
       } catch (err) {
         // handle error
         console.log(err);
