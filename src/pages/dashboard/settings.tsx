@@ -40,6 +40,7 @@ const Settings = () => {
 
   const defaultValues: Partial<SettingFormValues> = {
     name: dashboardCtx.state.user.name,
+    savingFromJanuary2024: dashboardCtx.state.user.savingFromJanuary2024,
   };
 
   const form = useForm<SettingFormValues>({
