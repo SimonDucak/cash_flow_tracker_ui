@@ -18,6 +18,9 @@ const Sidebar = () => {
     navigateToDashboardSavingGoals,
     IsMatch,
     navigateToDashboard,
+    navigateToDashboardExpectedIncome,
+    navigateToDashboardExpectedOutcome,
+    navigateToDashboardDebtors,
   } = useNavigator();
 
   const dashboardCtx = useDashboardContext();
@@ -61,17 +64,53 @@ const Sidebar = () => {
               Saving Goals
             </Button>
 
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              onClick={() =>
+                navigateToDashboardExpectedIncome(
+                  dashboardCtx.state.user.id.toString()
+                )
+              }
+              variant={
+                IsMatch(NavigatorRouteName.DASHBOARD_EXPECTED_INCOME)
+                  ? "secondary"
+                  : "ghost"
+              }
+              className="w-full justify-start"
+            >
               <IoTrendingUp className="mr-2 h-4 w-4" />
               Expected Incomes
             </Button>
 
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              onClick={() =>
+                navigateToDashboardExpectedOutcome(
+                  dashboardCtx.state.user.id.toString()
+                )
+              }
+              variant={
+                IsMatch(NavigatorRouteName.DASHBOARD_EXPECTED_OUTCOME)
+                  ? "secondary"
+                  : "ghost"
+              }
+              className="w-full justify-start"
+            >
               <IoTrendingDown className="mr-2 h-4 w-4" />
               Expected Outcomes
             </Button>
 
-            <Button variant="ghost" className="w-full justify-start">
+            <Button
+              onClick={() =>
+                navigateToDashboardDebtors(
+                  dashboardCtx.state.user.id.toString()
+                )
+              }
+              variant={
+                IsMatch(NavigatorRouteName.DASHBOARD_DEBTORS)
+                  ? "secondary"
+                  : "ghost"
+              }
+              className="w-full justify-start"
+            >
               <BsPersonVideo2 className="mr-2 h-4 w-4" />
               Debtors
             </Button>

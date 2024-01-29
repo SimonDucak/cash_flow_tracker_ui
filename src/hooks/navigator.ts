@@ -6,6 +6,9 @@ export enum NavigatorRouteName {
     DASHBOARD,
     DASHBOARD_SETTINGS,
     DASHBOARD_SAVING_GOALS,
+    DASHBOARD_EXPECTED_INCOME,
+    DASHBOARD_EXPECTED_OUTCOME,
+    DASHBOARD_DEBTORS,
 }
 
 export type NavigatorRoute = {
@@ -46,6 +49,24 @@ routes.set(NavigatorRouteName.DASHBOARD_SAVING_GOALS, {
     nestedPath: '/saving-goals',
 });
 
+routes.set(NavigatorRouteName.DASHBOARD_EXPECTED_INCOME, {
+    routeDefinition: '/dashboard/:id/expected-income',
+    path: '/dashboard/:id/expected-income',
+    nestedPath: '/expected-income',
+});
+
+routes.set(NavigatorRouteName.DASHBOARD_EXPECTED_OUTCOME, {
+    routeDefinition: '/dashboard/:id/expected-outcome',
+    path: '/dashboard/:id/expected-outcome',
+    nestedPath: '/expected-outcome',
+});
+
+routes.set(NavigatorRouteName.DASHBOARD_DEBTORS, {
+    routeDefinition: '/dashboard/:id/debtors',
+    path: '/dashboard/:id/debtors',
+    nestedPath: '/debtors',
+});
+
 export const getRoute = (routeName: NavigatorRouteName): NavigatorRoute => {
     const route = routes.get(routeName);
     if (!route) throw new Error(`Route ${routeName} not found`);
@@ -75,6 +96,18 @@ export const useNavigator = () => {
         navigate(getRoute(NavigatorRouteName.DASHBOARD_SAVING_GOALS).path.replace(':id', id));
     };
 
+    const navigateToDashboardExpectedIncome = (id: string) => {
+        navigate(getRoute(NavigatorRouteName.DASHBOARD_EXPECTED_INCOME).path.replace(':id', id));
+    }
+
+    const navigateToDashboardExpectedOutcome = (id: string) => {
+        navigate(getRoute(NavigatorRouteName.DASHBOARD_EXPECTED_OUTCOME).path.replace(':id', id));
+    }
+
+    const navigateToDashboardDebtors = (id: string) => {
+        navigate(getRoute(NavigatorRouteName.DASHBOARD_DEBTORS).path.replace(':id', id));
+    }
+
     const IsMatch = (NavigatorRouteName: NavigatorRouteName): boolean => {
         const match = useMatch(getRoute(NavigatorRouteName).routeDefinition.replace("*", ""));
         return !!match;
@@ -87,6 +120,9 @@ export const useNavigator = () => {
         navigateToDashboard,
         navigateToDashboardSettings,
         navigateToDashboardSavingGoals,
+        navigateToDashboardExpectedIncome,
+        navigateToDashboardExpectedOutcome,
+        navigateToDashboardDebtors,
         IsMatch,
     };
 }

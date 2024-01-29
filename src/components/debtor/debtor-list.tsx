@@ -8,28 +8,28 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useDashboardContext } from "@/hooks/dashboard-context";
-import { formatCurrency, formatDate } from "@/utils/formatters";
+import { formatCurrency } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { useTask } from "@/hooks/task";
-import { SavingGoalAdapter } from "@/adapters/SavingGoalAdapter";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { DebtorAdapter } from "@/adapters/DebtorAdapter";
 
-export const SavingGoalsList = () => {
+export const DebtorList = () => {
   const dashboardCtx = useDashboardContext();
 
-  const totalAmount = dashboardCtx.state.savingGoals.reduce(
+  const totalAmount = dashboardCtx.state.debtors.reduce(
     (total, goal) => total + goal.amount,
     0
   );
 
-  const deleteGoalTask = useTask(async (goalId: number) => {
+  const deleteDebtorTask = useTask(async (debtorId: number) => {
     try {
-      const adatper = new SavingGoalAdapter(dashboardCtx.state.user.id);
-      await adatper.deleteRecord(goalId);
-      const goals = dashboardCtx.state.savingGoals.filter(
-        (goal) => goal.id !== goalId
+      const adatper = new DebtorAdapter(dashboardCtx.state.user.id);
+      await adatper.deleteRecord(debtorId);
+      const debtors = dashboardCtx.state.debtors.filter(
+        (debtor) => debtor.id !== debtorId
       );
-      dashboardCtx.setState((prev) => ({ ...prev, savingGoals: goals }));
+      dashboardCtx.setState((prev) => ({ ...prev, debtors: debtors }));
     } catch (err) {
       console.error(err);
     }
@@ -43,11 +43,7 @@ export const SavingGoalsList = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
-
-            <TableHead>Date from</TableHead>
-
-            <TableHead>Date to</TableHead>
+            <TableHead className="w-[200px]">Title</TableHead>
 
             <TableHead className="text-right">Amount</TableHead>
 
@@ -56,25 +52,21 @@ export const SavingGoalsList = () => {
         </TableHeader>
 
         <TableBody>
-          {dashboardCtx.state.savingGoals.map((goal) => (
-            <TableRow key={goal.id}>
-              <TableCell className="font-medium">{goal.name}</TableCell>
-
-              <TableCell>{formatDate(goal.dateFrom)}</TableCell>
-
-              <TableCell>{formatDate(goal.dateTo)}</TableCell>
+          {dashboardCtx.state.debtors.map((debtor) => (
+            <TableRow key={debtor.id}>
+              <TableCell className="font-medium">{debtor.name}</TableCell>
 
               <TableCell className="text-right">
-                {formatCurrency(goal.amount)}
+                {formatCurrency(debtor.amount)}
               </TableCell>
 
               <TableCell className="text-right">
                 <Button
-                  disabled={deleteGoalTask.isRunning}
-                  onClick={() => deleteGoalTask.perform(goal.id)}
+                  disabled={deleteDebtorTask.isRunning}
+                  onClick={() => deleteDebtorTask.perform(debtor.id)}
                   size="sm"
                 >
-                  {deleteGoalTask.isRunning && (
+                  {deleteDebtorTask.isRunning && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Delete
@@ -86,7 +78,7 @@ export const SavingGoalsList = () => {
 
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={4}>Total</TableCell>
+            <TableCell colSpan={2}>Total</TableCell>
 
             <TableCell className="text-right">
               {formatCurrency(totalAmount)}

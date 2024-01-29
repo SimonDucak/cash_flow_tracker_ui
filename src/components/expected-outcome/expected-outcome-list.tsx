@@ -11,25 +11,28 @@ import { useDashboardContext } from "@/hooks/dashboard-context";
 import { formatCurrency, formatDate } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { useTask } from "@/hooks/task";
-import { SavingGoalAdapter } from "@/adapters/SavingGoalAdapter";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { ExpectedOutcomeAdapter } from "@/adapters/ExpectedOutcomeAdapter";
 
-export const SavingGoalsList = () => {
+export const ExpectedOutcomeList = () => {
   const dashboardCtx = useDashboardContext();
 
-  const totalAmount = dashboardCtx.state.savingGoals.reduce(
+  const totalAmount = dashboardCtx.state.expectedOutcomes.reduce(
     (total, goal) => total + goal.amount,
     0
   );
 
-  const deleteGoalTask = useTask(async (goalId: number) => {
+  const deleteOutcomeTask = useTask(async (outcomeId: number) => {
     try {
-      const adatper = new SavingGoalAdapter(dashboardCtx.state.user.id);
-      await adatper.deleteRecord(goalId);
-      const goals = dashboardCtx.state.savingGoals.filter(
-        (goal) => goal.id !== goalId
+      const adatper = new ExpectedOutcomeAdapter(dashboardCtx.state.user.id);
+      await adatper.deleteRecord(outcomeId);
+      const outcomes = dashboardCtx.state.expectedOutcomes.filter(
+        (outcome) => outcome.id !== outcomeId
       );
-      dashboardCtx.setState((prev) => ({ ...prev, savingGoals: goals }));
+      dashboardCtx.setState((prev) => ({
+        ...prev,
+        expectedOutcomes: outcomes,
+      }));
     } catch (err) {
       console.error(err);
     }
@@ -43,7 +46,7 @@ export const SavingGoalsList = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
+            <TableHead className="w-[200px]">Title</TableHead>
 
             <TableHead>Date from</TableHead>
 
@@ -56,25 +59,25 @@ export const SavingGoalsList = () => {
         </TableHeader>
 
         <TableBody>
-          {dashboardCtx.state.savingGoals.map((goal) => (
-            <TableRow key={goal.id}>
-              <TableCell className="font-medium">{goal.name}</TableCell>
+          {dashboardCtx.state.expectedOutcomes.map((outcome) => (
+            <TableRow key={outcome.id}>
+              <TableCell className="font-medium">{outcome.title}</TableCell>
 
-              <TableCell>{formatDate(goal.dateFrom)}</TableCell>
+              <TableCell>{formatDate(outcome.dateFrom)}</TableCell>
 
-              <TableCell>{formatDate(goal.dateTo)}</TableCell>
+              <TableCell>{formatDate(outcome.dateTo)}</TableCell>
 
               <TableCell className="text-right">
-                {formatCurrency(goal.amount)}
+                {formatCurrency(outcome.amount)}
               </TableCell>
 
               <TableCell className="text-right">
                 <Button
-                  disabled={deleteGoalTask.isRunning}
-                  onClick={() => deleteGoalTask.perform(goal.id)}
+                  disabled={deleteOutcomeTask.isRunning}
+                  onClick={() => deleteOutcomeTask.perform(outcome.id)}
                   size="sm"
                 >
-                  {deleteGoalTask.isRunning && (
+                  {deleteOutcomeTask.isRunning && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Delete

@@ -11,25 +11,25 @@ import { useDashboardContext } from "@/hooks/dashboard-context";
 import { formatCurrency, formatDate } from "@/utils/formatters";
 import { Button } from "@/components/ui/button";
 import { useTask } from "@/hooks/task";
-import { SavingGoalAdapter } from "@/adapters/SavingGoalAdapter";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { ExpectedIncomeAdapter } from "@/adapters/ExpectedIncomeAdapter";
 
-export const SavingGoalsList = () => {
+export const ExpectedIncomeList = () => {
   const dashboardCtx = useDashboardContext();
 
-  const totalAmount = dashboardCtx.state.savingGoals.reduce(
+  const totalAmount = dashboardCtx.state.expectedIncomes.reduce(
     (total, goal) => total + goal.amount,
     0
   );
 
-  const deleteGoalTask = useTask(async (goalId: number) => {
+  const deleteIncomeTask = useTask(async (incomeId: number) => {
     try {
-      const adatper = new SavingGoalAdapter(dashboardCtx.state.user.id);
-      await adatper.deleteRecord(goalId);
-      const goals = dashboardCtx.state.savingGoals.filter(
-        (goal) => goal.id !== goalId
+      const adatper = new ExpectedIncomeAdapter(dashboardCtx.state.user.id);
+      await adatper.deleteRecord(incomeId);
+      const incomes = dashboardCtx.state.expectedIncomes.filter(
+        (income) => income.id !== incomeId
       );
-      dashboardCtx.setState((prev) => ({ ...prev, savingGoals: goals }));
+      dashboardCtx.setState((prev) => ({ ...prev, expectedIncomes: incomes }));
     } catch (err) {
       console.error(err);
     }
@@ -43,7 +43,7 @@ export const SavingGoalsList = () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
+            <TableHead className="w-[200px]">Title</TableHead>
 
             <TableHead>Date from</TableHead>
 
@@ -56,25 +56,25 @@ export const SavingGoalsList = () => {
         </TableHeader>
 
         <TableBody>
-          {dashboardCtx.state.savingGoals.map((goal) => (
-            <TableRow key={goal.id}>
-              <TableCell className="font-medium">{goal.name}</TableCell>
+          {dashboardCtx.state.expectedIncomes.map((income) => (
+            <TableRow key={income.id}>
+              <TableCell className="font-medium">{income.title}</TableCell>
 
-              <TableCell>{formatDate(goal.dateFrom)}</TableCell>
+              <TableCell>{formatDate(income.dateFrom)}</TableCell>
 
-              <TableCell>{formatDate(goal.dateTo)}</TableCell>
+              <TableCell>{formatDate(income.dateTo)}</TableCell>
 
               <TableCell className="text-right">
-                {formatCurrency(goal.amount)}
+                {formatCurrency(income.amount)}
               </TableCell>
 
               <TableCell className="text-right">
                 <Button
-                  disabled={deleteGoalTask.isRunning}
-                  onClick={() => deleteGoalTask.perform(goal.id)}
+                  disabled={deleteIncomeTask.isRunning}
+                  onClick={() => deleteIncomeTask.perform(income.id)}
                   size="sm"
                 >
-                  {deleteGoalTask.isRunning && (
+                  {deleteIncomeTask.isRunning && (
                     <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
                   )}
                   Delete
