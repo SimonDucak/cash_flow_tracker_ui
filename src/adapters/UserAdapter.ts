@@ -11,6 +11,7 @@ export class UserAdapter extends BaseAdapter<User> {
         return {
             id: 0,
             name: '',
+            savingFromJanuary2024: 0,
         }
     }
 
@@ -20,6 +21,7 @@ export class UserAdapter extends BaseAdapter<User> {
         return {
             id: parseNumber(obj.id),
             name: parseString(obj.name),
+            savingFromJanuary2024: parseNumber(obj.savingFromJanuary2024 || 0),
         }
     }
 }

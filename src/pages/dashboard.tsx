@@ -23,6 +23,9 @@ import { ExpectedOutcomeAdapter } from "@/adapters/ExpectedOutcomeAdapter";
 import { DebtorAdapter } from "@/adapters/DebtorAdapter";
 import { Debtor } from "@/types/Debtor";
 import Debtors from "./dashboard/debtors";
+import { PaidDebt } from "@/types/PaidDebt";
+import { PaidDebtAdapter } from "@/adapters/PaidDebtAdapter";
+import { Charts } from "./dashboard/charts";
 
 const userAdapter = new UserAdapter();
 
@@ -35,6 +38,7 @@ const Dashboard = () => {
     expectedIncomes: [],
     expectedOutcomes: [],
     debtors: [],
+    paidDebts: [],
   });
 
   const addSavingGoal = (savingGoal: SavingGoal) => {
@@ -65,6 +69,13 @@ const Dashboard = () => {
     }));
   };
 
+  const addPaidDebt = (paidDebt: PaidDebt) => {
+    setState((prev) => ({
+      ...prev,
+      paidDebts: [...prev.paidDebts, paidDebt],
+    }));
+  };
+
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -92,12 +103,25 @@ const Dashboard = () => {
             debtorsAdapter.getRecords(),
           ]);
 
+        const promises = debtors.map(async (debtor) => {
+          const paidDebtAdapter = new PaidDebtAdapter(debtor.id);
+          return paidDebtAdapter.getRecords();
+        });
+
+        const paidDebtsChunks: PaidDebt[][] = await Promise.all(promises);
+
+        const paidDebts = paidDebtsChunks.reduce(
+          (acc, chunk) => [...acc, ...chunk],
+          []
+        );
+
         setState((prev) => ({
           ...prev,
           savingGoals,
           expectedIncomes,
           expectedOutcomes,
           debtors,
+          paidDebts,
         }));
       } catch (err) {
         // handle error
@@ -117,6 +141,7 @@ const Dashboard = () => {
         addExpectedIncome,
         addExpectedOutcome,
         addDebtor,
+        addPaidDebt,
       }}
     >
       <BaseLayout>
@@ -127,6 +152,13 @@ const Dashboard = () => {
             <div className="col-span-3 lg:col-span-4 lg:border-l">
               <div className="h-full px-4 py-6 lg:px-8">
                 <Routes>
+                  <Route
+                    path={
+                      getRoute(NavigatorRouteName.DASHBOARD_CHARTS).nestedPath
+                    }
+                    element={<Charts />}
+                  />
+
                   <Route
                     path={
                       getRoute(NavigatorRouteName.DASHBOARD_SETTINGS).nestedPath

@@ -9,6 +9,7 @@ export enum NavigatorRouteName {
     DASHBOARD_EXPECTED_INCOME,
     DASHBOARD_EXPECTED_OUTCOME,
     DASHBOARD_DEBTORS,
+    DASHBOARD_CHARTS,
 }
 
 export type NavigatorRoute = {
@@ -67,6 +68,12 @@ routes.set(NavigatorRouteName.DASHBOARD_DEBTORS, {
     nestedPath: '/debtors',
 });
 
+routes.set(NavigatorRouteName.DASHBOARD_CHARTS, {
+    routeDefinition: '/dashboard/:id/',
+    path: '/dashboard/:id/',
+    nestedPath: '',
+});
+
 export const getRoute = (routeName: NavigatorRouteName): NavigatorRoute => {
     const route = routes.get(routeName);
     if (!route) throw new Error(`Route ${routeName} not found`);
@@ -108,6 +115,10 @@ export const useNavigator = () => {
         navigate(getRoute(NavigatorRouteName.DASHBOARD_DEBTORS).path.replace(':id', id));
     }
 
+    const navigateToDashboardCharts = (id: string) => {
+        navigate(getRoute(NavigatorRouteName.DASHBOARD_CHARTS).path.replace(':id', id));
+    }
+
     const IsMatch = (NavigatorRouteName: NavigatorRouteName): boolean => {
         const match = useMatch(getRoute(NavigatorRouteName).routeDefinition.replace("*", ""));
         return !!match;
@@ -123,6 +134,7 @@ export const useNavigator = () => {
         navigateToDashboardExpectedIncome,
         navigateToDashboardExpectedOutcome,
         navigateToDashboardDebtors,
+        navigateToDashboardCharts,
         IsMatch,
     };
 }

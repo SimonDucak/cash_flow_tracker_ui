@@ -45,11 +45,15 @@ type ExpectedIncomeValues = z.infer<typeof profileFormSchema>;
 export function ExpectedIncomeForm() {
   const dashboardCtx = useDashboardContext();
 
+  const firstDayInYear = new Date(new Date().getFullYear(), 0, 1);
+
+  const lastDayInYear = new Date(new Date().getFullYear(), 11, 31);
+
   const defaultValues: Partial<ExpectedIncomeValues> = {
     title: "",
     amount: 0,
-    dateFrom: new Date(),
-    dateTo: new Date(),
+    dateFrom: firstDayInYear,
+    dateTo: lastDayInYear,
   };
 
   const form = useForm<ExpectedIncomeValues>({

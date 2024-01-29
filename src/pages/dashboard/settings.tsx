@@ -30,6 +30,7 @@ const profileFormSchema = z.object({
     .max(30, {
       message: "Username must not be longer than 30 characters.",
     }),
+  savingFromJanuary2024: z.number(),
 });
 
 type SettingFormValues = z.infer<typeof profileFormSchema>;
@@ -65,7 +66,11 @@ const Settings = () => {
 
   const updateProfileTask = useTask(async (data: SettingFormValues) => {
     try {
-      const updatedUser = { ...dashboardCtx.state.user, name: data.name };
+      const updatedUser = {
+        ...dashboardCtx.state.user,
+        name: data.name,
+        savingFromJanuary2024: data.savingFromJanuary2024,
+      };
       await adapter.updateRecord(updatedUser);
       dashboardCtx.setState((prev) => ({ ...prev, user: updatedUser }));
     } catch (err) {
@@ -104,6 +109,31 @@ const Settings = () => {
                 <FormDescription>
                   This is your public display name. It can be your real name or
                   a pseudonym. You can only change this once every 30 days.
+                </FormDescription>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="savingFromJanuary2024"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Amount</FormLabel>
+
+                <FormControl>
+                  <Input
+                    placeholder="Enter amount..."
+                    {...field}
+                    onChange={(event) => field.onChange(+event.target.value)}
+                  />
+                </FormControl>
+
+                <FormDescription>
+                  My savings to January 2024. It used to calculate my actual
+                  net.
                 </FormDescription>
 
                 <FormMessage />
