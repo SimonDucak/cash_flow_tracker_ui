@@ -46,10 +46,8 @@ export function MetricWidget() {
       0
     );
 
-    const multiplier = monthIndex + 1;
-
     const savingGoalsPrediction = savingGoals.reduce(
-      (accumulator, income) => accumulator + income.amount * multiplier,
+      (accumulator, goal) => accumulator + goal.amount * (monthIndex + 1),
       0
     );
 
